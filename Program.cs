@@ -252,7 +252,11 @@ namespace PlaywrightApp
                                     {
                                         case "1":
                                             Console.WriteLine("Share conversation selected.");
-                                            await selectedChatLocator.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            // learn: Use Playwright selector thingy, 
+                                            // old , apperantly html doesnt do button in button and makes them siblings : await selectedChatLocator.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            // await page.GetByRole(AriaRole.Button).RightOf(selectedChatLocator).First.ClickAsync();
+                                            // RightOf doesnt exist apperently
+                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
                                             await page.GetByRole(AriaRole.Menuitem, new() { Name = "Share conversation" }).ClickAsync();
                                             await page.Locator("[data-test-id=\"copy-link\"]").ClickAsync();
                                             await Task.Delay(500); // Small delay to ensure clipboard has the link uk.
