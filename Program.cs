@@ -114,7 +114,7 @@ namespace PlaywrightApp
                 await page.Locator("[data-test-id=\"side-nav-menu-button\"]").ClickAsync();
             }
 
-            //new feature here later : check if theres any inturuption that might stop usage, so restart 
+           // feature index #1 here
 
 
             //
@@ -291,6 +291,9 @@ namespace PlaywrightApp
                                             Console.WriteLine($"Chat link: {chatLink}");
                                             await page.Locator("[data-test-id=\"close-dialog\"]").ClickAsync();
                                             Console.WriteLine("Returning...");
+
+                                            
+
                                             break;
                                             /*
                                                     await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting and" }).ClickAsync();
@@ -303,7 +306,7 @@ namespace PlaywrightApp
                                             
                                                  
                                             await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
-                                            if (!await page.GetByRole(AriaRole.Menuitem, new() { Name = "Pin" }).IsVisibleAsync())
+                                            if (await page.Locator("[data-test-id=\"unpin-button\"]").IsVisibleAsync())
                                                 {
                                                     Console.WriteLine("The Chat seems it might already been pinned! \nDo you want to unpin it? Use 'Y' for yes or 'N' for no to proceed.");
                                                     var unpinInput = Console.ReadLine().Trim().ToUpper();
@@ -322,6 +325,8 @@ namespace PlaywrightApp
                                                     }
                                                 }
                                             await page.GetByRole(AriaRole.Menuitem, new() { Name = "Pin" }).ClickAsync();
+                                            await page.Locator("[data-test-id=\"save-button\"]").ClickAsync();
+
                                              Console.WriteLine("Chat pinned successfully, It will always appear at the top of your chat history!");
                                             /*
                                                     await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
@@ -340,7 +345,18 @@ namespace PlaywrightApp
                                             Console.WriteLine("Add to notebook selected. (Not implemented yet)");
                                             break;
                                         case "5":
-                                            Console.WriteLine("Delete selected. (Not implemented yet)");
+                                            Console.WriteLine("Delete selected.");
+                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            await page.Locator("[data-test-id=\"delete-button\"]").ClickAsync();
+                                            await page.Locator("[data-test-id=\"confirm-button\"]").ClickAsync();
+                                            
+                                            Console.WriteLine("Chat deleted successfully! Returning...");
+                                            /*
+                                                await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                                await page1.Locator("[data-test-id=\"delete-button\"]").ClickAsync();
+                                                await page1.Locator("[data-test-id=\"confirm-button\"]").ClickAsync();
+                                        
+                                            */
                                             break;
                                         default:
                                             Console.WriteLine("Invalid input. Please enter a number from 1 to 5 corresponding to the chat options.");
@@ -509,4 +525,10 @@ public class Tests : PageTest
  
 
 
+*/
+
+/*
+Future feature notes::
+ //index #1 : check if theres any inturuption that might stop usage, so restart ,also maybe take a screen shot and locators snapshot too
+//index #2 : check if the tools is intaracting with a chat it already just opened to prevent error
 */
