@@ -271,7 +271,7 @@ namespace PlaywrightApp
                         {
                             if (optionsInput == "Y")
                                 {
-                                    Console.WriteLine("{Chat options} \n1.Share conversation: \n2.Pin:\n3.Rename:\n4.Add to notebook:\n5.Delete:");
+                                    Console.WriteLine("{Chat options} \n1.Share conversation: \n2.Pin/Unpin:\n3.Rename:\n4.Add to notebook:\n5.Delete:");
                                     var optionSelection  = Console.ReadLine().Trim();
                                     switch (optionSelection)
                                     {
@@ -300,13 +300,37 @@ namespace PlaywrightApp
                                             */
                                         case "2":
                                             Console.WriteLine("Pin selected.");
+                                            
+                                                 
                                             await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            if (!await page.GetByRole(AriaRole.Menuitem, new() { Name = "Pin" }).IsVisibleAsync())
+                                                {
+                                                    Console.WriteLine("The Chat seems it might already been pinned! \nDo you want to unpin it? Use 'Y' for yes or 'N' for no to proceed.");
+                                                    var unpinInput = Console.ReadLine().Trim().ToUpper();
+                                                    if (unpinInput == "Y")
+                                                    {
+                                                        await page.Locator("[data-test-id=\"unpin-button\"]").ClickAsync();
+                                                        Console.WriteLine("Chat unpinned successfully!");
+                                                        break;
+                                                    }else if (unpinInput == "N")
+                                                    {
+                                                        Console.WriteLine("Keeping the chat pinned and returning...");
+                                                        break;
+                                                    }else{
+                                                        Console.WriteLine("Invalid input. Please enter 'Y' or 'N'. Returning...");
+                                                        break;
+                                                    }
+                                                }
                                             await page.GetByRole(AriaRole.Menuitem, new() { Name = "Pin" }).ClickAsync();
                                              Console.WriteLine("Chat pinned successfully, It will always appear at the top of your chat history!");
                                             /*
                                                     await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
                                                     await page1.Locator("[data-test-id=\"pin-button\"]").ClickAsync();
                                                     await page1.Locator("[data-test-id=\"save-button\"]").ClickAsync();
+
+                                                    // so isntead of the pin the locator for something that is pinned has a unpin locator, so i should just makean ifcondition to check for that and give the user the option to get rid of it 
+                                                    await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                                    await page1.Locator("[data-test-id=\"unpin-button\"]").ClickAsync();
                                             */
                                             break;
                                         case "3":
