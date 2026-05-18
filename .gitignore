@@ -1,0 +1,14 @@
+# .NET
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+*.lscache
+
+# Playwright
+PlaywrightProfile/
+auth.json
+
+# User secrets
+.env
