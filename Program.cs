@@ -52,7 +52,6 @@ namespace PlaywrightApp
                             "geolocation", 
                             "midi", 
                             "notifications", 
-                            "push", 
                             "camera", 
                             "microphone", 
                             "background-sync", 
