@@ -47,23 +47,27 @@ namespace PlaywrightApp
                         "--disable-blink-features=AutomationControlled",
                         "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
                     },
-                    Permissions = new[] 
-                        { 
-                            "geolocation", 
-                            "midi", 
-                            "notifications", 
-                            "camera", 
-                            "microphone", 
-                            "background-sync", 
-                            "ambient-light-sensor", 
-                            "accelerometer", 
-                            "gyroscope", 
-                            "magnetometer", 
-                            "accessibility-events", 
-                            "clipboard-read", 
-                            "clipboard-write", 
-                            "payment-handler" 
-                        }
+                    Permissions = new[]
+                    {
+                        "accelerometer",
+                        "ambient-light-sensor",
+                        "background-sync",
+                        "camera",
+                        "clipboard-read",
+                        "clipboard-write",
+                        "geolocation",
+                        "gyroscope",
+                        "local-fonts",
+                        "local-network-access",
+                        "magnetometer",
+                        "microphone",
+                        "midi",
+                        "midi-sysex",
+                        "notifications",
+                        "payment-handler",
+                        "screen-wake-lock",
+                        "storage-access"
+                    }
                 });
 
             //
@@ -109,6 +113,10 @@ namespace PlaywrightApp
                 Console.WriteLine("Sidebar remained hidden. Toggling it open manually...");
                 await page.Locator("[data-test-id=\"side-nav-menu-button\"]").ClickAsync();
             }
+
+            //new feature here later : check if theres any inturuption that might stop usage, so restart 
+
+
             //
             // Creates a new page that loads to gemini and intaracts 
             //
@@ -282,7 +290,7 @@ namespace PlaywrightApp
                                             var chatLink = await page.EvaluateAsync<string>("navigator.clipboard.readText()");
                                             Console.WriteLine($"Chat link: {chatLink}");
                                             await page.Locator("[data-test-id=\"close-dialog\"]").ClickAsync();
-                                            Console.WriteLine("Returning to chat list.");
+                                            Console.WriteLine("Returning...");
                                             break;
                                             /*
                                                     await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting and" }).ClickAsync();
@@ -291,7 +299,15 @@ namespace PlaywrightApp
                                                     await page1.Locator("[data-test-id=\"close-dialog\"]").ClickAsync();
                                             */
                                         case "2":
-                                            Console.WriteLine("Pin selected. (Not implemented yet)");
+                                            Console.WriteLine("Pin selected.");
+                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            await page.GetByRole(AriaRole.Menuitem, new() { Name = "Pin" }).ClickAsync();
+                                             Console.WriteLine("Chat pinned successfully, It will always appear at the top of your chat history!");
+                                            /*
+                                                    await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                                    await page1.Locator("[data-test-id=\"pin-button\"]").ClickAsync();
+                                                    await page1.Locator("[data-test-id=\"save-button\"]").ClickAsync();
+                                            */
                                             break;
                                         case "3":
                                             Console.WriteLine("Rename selected. (Not implemented yet)");
