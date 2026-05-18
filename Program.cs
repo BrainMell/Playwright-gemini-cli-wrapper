@@ -339,7 +339,29 @@ namespace PlaywrightApp
                                             */
                                             break;
                                         case "3":
-                                            Console.WriteLine("Rename selected. (Not implemented yet)");
+                                            Console.WriteLine("Rename selected.");
+                                            
+                                                    
+                                            Console.WriteLine("Enter a new name for the chat:");
+                                               var newName = Console.ReadLine().Trim();
+                                                if (string.IsNullOrWhiteSpace(newName))                                                
+                                                {
+                                                    Console.WriteLine("Chat name cannot be empty. Please enter a valid name.");
+                                                    continue;
+                                                }
+                                            
+                                                await selectedChatLocator.Locator("..").Locator("[data-test-id=\"actions-menu-button\"]").ClickAsync();
+                                                await page.Locator("[data-test-id=\"rename-button\"]").ClickAsync();
+                                                await page.Locator("[data-test-id=\"edit-title-input\"]").FillAsync(newName);
+                                                await page.Locator("[data-test-id=\"save-button\"]").ClickAsync();
+                                                /*
+                                                        await page1.Locator("[data-test-id=\"actions-menu-button\"]").ClickAsync();
+                                                        await page1.Locator("[data-test-id=\"rename-button\"]").ClickAsync();
+                                                        await page1.Locator("[data-test-id=\"edit-title-input\"]").ClickAsync();
+                                                        await page1.Locator("[data-test-id=\"edit-title-input\"]").FillAsync("Helloo");
+                                                        await page1.Locator("[data-test-id=\"save-button\"]").ClickAsync();
+                                                */
+                                                Console.WriteLine("Chat renamed successfully! Returning...");
                                             break;
                                         case "4":
                                             Console.WriteLine("Add to notebook selected. (Not implemented yet)");
@@ -349,7 +371,7 @@ namespace PlaywrightApp
                                             await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
                                             await page.Locator("[data-test-id=\"delete-button\"]").ClickAsync();
                                             await page.Locator("[data-test-id=\"confirm-button\"]").ClickAsync();
-                                            
+
                                             Console.WriteLine("Chat deleted successfully! Returning...");
                                             /*
                                                 await page1.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
@@ -367,10 +389,10 @@ namespace PlaywrightApp
                                 }else if (optionsInput == "N")
                                 {
                                     Console.WriteLine("Skipping chat options.");
-                                    continue;
+                                    break;
                                 }else{
                                     Console.WriteLine("Invalid input. Please enter 'Y' or 'N'.");
-                                    continue;
+                                    break;
                                 }  
                         }
   
