@@ -46,7 +46,25 @@ namespace PlaywrightApp
                     Args = new[] {
                         "--disable-blink-features=AutomationControlled",
                         "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-                    }
+                    },
+                    Permissions = new[] 
+                        { 
+                            "geolocation", 
+                            "midi", 
+                            "notifications", 
+                            "push", 
+                            "camera", 
+                            "microphone", 
+                            "background-sync", 
+                            "ambient-light-sensor", 
+                            "accelerometer", 
+                            "gyroscope", 
+                            "magnetometer", 
+                            "accessibility-events", 
+                            "clipboard-read", 
+                            "clipboard-write", 
+                            "payment-handler" 
+                        }
                 });
 
             //
@@ -83,7 +101,7 @@ namespace PlaywrightApp
                 await page.Locator("[data-test-id=\"all-conversations\"]").WaitForAsync(new() 
                 { 
                     State = WaitForSelectorState.Visible, 
-                    Timeout = 3000 
+                    Timeout = 7000 
                 });
             }
             catch (TimeoutException)
