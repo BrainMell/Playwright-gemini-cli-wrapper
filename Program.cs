@@ -73,6 +73,7 @@ namespace PlaywrightApp
             //
             //Browser context code for managing independent sessions
             //
+            // wrap in try catch to logg internet error
             
             var page = await context.NewPageAsync();
             await page.GotoAsync(url, new PageGotoOptions
@@ -114,6 +115,8 @@ namespace PlaywrightApp
                 await page.Locator("[data-test-id=\"side-nav-menu-button\"]").ClickAsync();
             }
 
+            Console.WriteLine("Opened Gemini Successfully!");
+
            // feature index #1 here
 
 
@@ -123,7 +126,7 @@ namespace PlaywrightApp
 
 
             
-            Console.WriteLine("Opened Gemini Successfully!");
+            
             
             // infinite loop for main interface, will break when Gemini says goodbye
             while (true)
@@ -281,7 +284,7 @@ namespace PlaywrightApp
                                             // old , apperantly html doesnt do button in button and makes them siblings : await selectedChatLocator.GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
                                             // await page.GetByRole(AriaRole.Button).RightOf(selectedChatLocator).First.ClickAsync();
                                             // RightOf doesnt exist apperently
-                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { NameRegex = new System.Text.RegularExpressions.Regex("^More options for") }).ClickAsync();
                                             await page.GetByRole(AriaRole.Menuitem, new() { Name = "Share conversation" }).ClickAsync();
                                             await page.Locator("[data-test-id=\"copy-link\"]").ClickAsync();
                                             await Task.Delay(500); // Small delay to ensure clipboard has the link uk.
@@ -305,7 +308,7 @@ namespace PlaywrightApp
                                             Console.WriteLine("Pin selected.");
                                             
                                                  
-                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { NameRegex = new System.Text.RegularExpressions.Regex("^More options for") }).ClickAsync();
                                             if (await page.Locator("[data-test-id=\"unpin-button\"]").IsVisibleAsync())
                                                 {
                                                     Console.WriteLine("The Chat seems it might already been pinned! \nDo you want to unpin it? Use 'Y' for yes or 'N' for no to proceed.");
@@ -364,11 +367,30 @@ namespace PlaywrightApp
                                                 Console.WriteLine("Chat renamed successfully! Returning...");
                                             break;
                                         case "4":
-                                            Console.WriteLine("Add to notebook selected. (Not implemented yet)");
+                                            Console.WriteLine("Add to notebook selected.");
+                                            if (!await page.GetByRole(AriaRole.Menuitem, new() { Name = "Add to notebook" }).IsVisibleAsync())
+                                            {
+                                                Console.WriteLine("There are no notebooks yet, do you want to create one?: Y/N");
+                                                var notebookInput = Console.ReadLine().Trim().ToUpper();
+                                                if (notebookInput == "Y")
+                                                {
+                                                    // ill get back to you
+                                                }else if (notebookInput == "N")
+                                                {                                                    
+                                                    Console.WriteLine("Chat was not added to a notebook. Returning...");
+                                                }else{
+                                                    Console.WriteLine("Invalid input. Please enter 'Y' or 'N'. Returning...");
+                                                }
+                                                break;
+                                            }
+
+                                            //
+                                            // Wait for new  notebook feature review
+                                            //
                                             break;
                                         case "5":
                                             Console.WriteLine("Delete selected.");
-                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { Name = "More options for Greeting" }).ClickAsync();
+                                            await selectedChatLocator.Locator("..").GetByRole(AriaRole.Button, new() { NameRegex = new System.Text.RegularExpressions.Regex("^More options for") }).ClickAsync();
                                             await page.Locator("[data-test-id=\"delete-button\"]").ClickAsync();
                                             await page.Locator("[data-test-id=\"confirm-button\"]").ClickAsync();
 
@@ -394,6 +416,7 @@ namespace PlaywrightApp
                                     Console.WriteLine("Invalid input. Please enter 'Y' or 'N'.");
                                     break;
                                 }  
+                            
                         }
   
                         
@@ -409,6 +432,73 @@ namespace PlaywrightApp
                     continue;
                 }
 
+                //
+                // NoteBook
+                //
+
+                if (userInput == "/notebook")
+                {
+                    Console.WriteLine("Do you want to intaract with an existing notebook or create a new one? Use 'Y' for existing or 'N' for new to proceed.");
+                    if (Console.ReadLine().Trim().ToUpper() == "N")
+                    {
+                        await page.GetByRole(AriaRole.Link, new() { Name = "New notebook" }).ClickAsync();
+                        if (await page.GetByRole(AriaRole.Heading, new() { Name = "Getting started" }).IsVisibleAsync())
+                        {
+                            await page.GetByRole(AriaRole.Button, new() { Name = "Getting started" }).ClickAsync();
+                            continue;
+                        }
+                        Console.WriteLine("Enter New Notebook name:");
+
+                        var NewNoteBookName = Console.ReadLine().Trim();
+                        if (string.IsNullOrWhiteSpace(NewNoteBookName)){
+                            Console.WriteLine("Notebook name cannot be empty. Please enter a valid name.");
+                            continue;
+                        }
+
+                        await page.Locator("[data-test-id=\"project-name-input\"]").FillAsync(NewNoteBookName);
+                        await page.Locator("form [data-test-id=\"save-project-button\"]").ClickAsync();
+
+                        Console.WriteLine("Notebook created successfully!");
+                        await page.GetByRole(AriaRole.Textbox, new() { Name = "Enter a prompt for Gemini" }).FillAsync("hello ");
+                        await page.GetByRole(AriaRole.Button, new() { Name = "Send message" }).ClickAsync();
+
+
+                        continue;
+                    }else{
+                        Console.WriteLine("Creating a new notebook...");
+                    }
+
+
+                    await page.GetByRole(AriaRole.Button, new() { Name = "New notebook"}).ClickAsync();
+                    
+                    
+
+
+                    /*
+
+                                await page1.GetByRole(AriaRole.Link, new() { Name = "New notebook" }).ClickAsync();
+                                await page1.Locator("[data-test-id=\"project-name-input\"]").ClickAsync();
+                                await page1.Locator("[data-test-id=\"project-name-input\"]").FillAsync("hi");
+                                await page1.Locator("form [data-test-id=\"save-project-button\"]").ClickAsync();
+                                await page1.Locator("[data-test-id=\"textarea-inner\"]").GetByRole(AriaRole.Paragraph).ClickAsync();
+                                await page1.GetByRole(AriaRole.Textbox, new() { Name = "Enter a prompt for Gemini" }).FillAsync("hello ");
+                                await page1.GetByRole(AriaRole.Button, new() { Name = "Send message" }).ClickAsync();
+                        Need to know how notebooks intaraction works
+                            
+                            await page1.GetByRole(AriaRole.Link, new() { Name = "New notebook" }).ClickAsync();
+                            
+                            await page1.GetByRole(AriaRole.Link, new() { Name = "Main chat" }).ClickAsync();
+                            await page1.GetByRole(AriaRole.Link, new() { Name = "New notebook" }).ClickAsync();
+                            await page1.GetByRole(AriaRole.Button, new() { Name = "Getting started" }).ClickAsync();
+                            await page1.Locator("[data-test-id=\"project-name-input\"]").FillAsync("test");
+                            await page1.Locator("form [data-test-id=\"save-project-button\"]").ClickAsync();
+                            await page1.Locator("[data-test-id=\"edit-sources-button\"]").ClickAsync();
+                            await page1.GetByRole(AriaRole.Menuitem, new() { Name = "Upload files. Documents, data" }).ClickAsync();
+                            await page1.GetByRole(AriaRole.Button, new() { Name = "Close" }).ClickAsync();
+
+                    */
+                    
+                }
 
                 //
                 //Tool selection code should be here

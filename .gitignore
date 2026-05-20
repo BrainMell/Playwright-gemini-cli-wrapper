@@ -12,3 +12,5 @@ auth.json
 
 # User secrets
 .env
+project.md
+documentation.md
